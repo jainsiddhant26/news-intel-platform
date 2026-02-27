@@ -1,30 +1,27 @@
 """Streamlit dashboard for the News Intelligence Platform."""
 
-import time
+import traceback
 from datetime import datetime
 from typing import Dict, List
 
 import streamlit as st
 
 from config import config
-from orchestrator import NewsOrchestrator
-from rag.retriever import RAGRetriever
 
 
 def main() -> None:
     """Main function to run the Streamlit dashboard."""
     st.set_page_config(
-        page_title="News Intelligence Platform",
-        page_icon="📰",
+        page_title="📰 News Intelligence Platform",
         layout="wide",
         initial_sidebar_state="expanded"
     )
     
-    # Initialize session state
-    initialize_session_state()
-    
     # Page title
     st.title("📰 News Intelligence Platform")
+    
+    # Initialize session state
+    initialize_session_state()
     
     # Sidebar
     render_sidebar()
@@ -33,7 +30,7 @@ def main() -> None:
     if st.session_state.show_results:
         render_results()
     else:
-        render_welcome()
+        st.info("👈 Select tickers and click Run Pipeline to start")
     
     # Historical query section
     render_historical_query()
@@ -97,49 +94,28 @@ def render_sidebar() -> None:
 
 
 def run_news_pipeline(tickers: List[str]) -> None:
-    """Run the news processing pipeline."""
+    """Run the news processing pipeline with lazy imports."""
     try:
         with st.spinner("📰 Fetching and analyzing news..."):
-            # Initialize orchestrator
-            orchestrator = NewsOrchestrator()
+            # Lazy import orchestrator only when button is clicked
+            from orchestrator import NewsOrchestrator
             
-            # Run pipeline
-            result = orchestrator.run_pipeline(tickers)
+            orchestrator = NewsOrchestrator()
+            results = orchestrator.run_pipeline(tickers=tickers)
             
             # Store results
-            st.session_state.processed_data = result
+            st.session_state.processed_data = results
             st.session_state.last_updated = datetime.now()
             st.session_state.show_results = True
             
-        st.success(f"✅ Pipeline completed! Processed {result['total']} articles")
+        st.success(f"✅ Pipeline completed! Processed {results['total']} articles")
         st.rerun()
         
     except Exception as e:
         st.error(f"❌ Error running pipeline: {str(e)}")
+        st.error("Full error details:")
+        st.code(traceback.format_exc())
         st.session_state.show_results = False
-
-
-def render_welcome() -> None:
-    """Render the welcome screen."""
-    st.markdown("""
-    ## Welcome to the News Intelligence Platform! 📈
-    
-    This platform provides real-time financial news analysis with:
-    
-    - 🤖 **AI-powered sentiment analysis** using FinBERT
-    - 🏷️ **Automatic classification** by topic and company
-    - ✅ **Cross-source verification** for reliability
-    - 🚨 **Smart alerts** for important market events
-    - 🔍 **Historical context** with RAG capabilities
-    
-    ### Getting Started:
-    1. **Select tickers** in the sidebar to monitor
-    2. **Click "Run Pipeline"** to fetch and analyze news
-    3. **View results** with alerts and detailed analysis
-    4. **Ask questions** about historical context
-    
-    Configure your API keys in the `.env` file to get started!
-    """)
 
 
 def render_results() -> None:
@@ -237,7 +213,7 @@ def render_results() -> None:
 
 
 def render_historical_query() -> None:
-    """Render the historical query section."""
+    """Render the historical query section with lazy imports."""
     st.header("🔍 Ask About History")
     
     query = st.text_input(
@@ -250,6 +226,9 @@ def render_historical_query() -> None:
         if query.strip():
             with st.spinner("🔍 Searching historical context..."):
                 try:
+                    # Lazy import RAGRetriever only when search is clicked
+                    from rag.retriever import RAGRetriever
+                    
                     retriever = RAGRetriever()
                     if retriever.is_available():
                         results = retriever.retrieve(query, top_k=5)
@@ -268,6 +247,8 @@ def render_historical_query() -> None:
                         
                 except Exception as e:
                     st.error(f"Error searching historical context: {str(e)}")
+                    st.error("Full error details:")
+                    st.code(traceback.format_exc())
         else:
             st.warning("Please enter a search query.")
 

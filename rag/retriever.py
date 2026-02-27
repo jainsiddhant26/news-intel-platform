@@ -3,14 +3,15 @@
 import os
 from typing import Dict, List
 
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
+from langchain_huggingface import HuggingFaceEmbeddings
 
 from config import config
 
 
 class RAGRetriever:
     """Class for retrieving relevant documents from ChromaDB using similarity search."""
+
     
     def __init__(self) -> None:
         """Initialize the RAG retriever with embeddings and vector store."""
