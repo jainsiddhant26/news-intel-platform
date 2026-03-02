@@ -46,9 +46,9 @@ class SynthesisAgent:
         if not self.llm:
             print("Groq client not available, returning default synthesis")
             article.update({
-                "summary": "• Unable to generate summary\n• LLM service unavailable\n• Please check configuration",
-                "historical_context": "Historical context unavailable due to system limitations",
-                "alert_level": "YELLOW"
+                "summary": ["No summary available"],
+                "historical_context": "N/A",
+                "alert_level": "GREEN"
             })
             return article
         
@@ -73,17 +73,16 @@ class SynthesisAgent:
                 "alert_level": alert_level
             })
             
-            return article
-            
         except Exception as e:
             print(f"Error during synthesis: {e}")
-            # Fallback values
+            # Return defaults immediately on any error
             article.update({
-                "summary": "• Error occurred during synthesis\n• Please try again later\n• Check system logs for details",
-                "historical_context": "Historical context unavailable due to processing error",
-                "alert_level": "YELLOW"
+                "summary": ["No summary available"],
+                "historical_context": "N/A",
+                "alert_level": "GREEN"
             })
-            return article
+        
+        return article
     
     def _get_historical_context(self, article: Dict[str, str]) -> List[Dict[str, str]]:
         """

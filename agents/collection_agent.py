@@ -27,13 +27,22 @@ class CollectionAgent:
             "CNBC": "https://www.cnbc.com/id/100003114/device/rss/rss.html"
         }
     
-    def run(self) -> List[Dict[str, str]]:
+    def run(self, tickers: list = None) -> List[Dict[str, str]]:
         """
         Collect news articles from all configured sources.
+        
+        Args:
+            tickers: Optional list of tickers to monitor (uses config default if None)
         
         Returns:
             List of article dictionaries with title, content, url, source, and published_at.
         """
+        # Update monitored tickers if provided
+        if tickers:
+            self.tickers = tickers
+        else:
+            self.tickers = config.MONITORED_TICKERS
+        
         all_articles = []
         seen_urls = set()
         
@@ -73,13 +82,13 @@ class CollectionAgent:
         """
         articles = []
         
-        for ticker in config.MONITORED_TICKERS:
+        for ticker in self.tickers:
             try:
                 response = self.newsapi_client.get_everything(
                     q=ticker,
                     language="en",
                     sort_by="publishedAt",
-                    page_size=5,
+                    page_size=2,
                     page=1
                 )
                 

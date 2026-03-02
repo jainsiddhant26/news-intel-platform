@@ -35,9 +35,9 @@ class ClassificationAgent:
         if not self.llm:
             print("Groq client not available, returning default classifications")
             article.update({
-                "topic": "other",
+                "topic": "general",
                 "company_ticker": "UNKNOWN",
-                "region": "GLOBAL"
+                "region": "global"
             })
             return article
         
@@ -63,11 +63,11 @@ class ClassificationAgent:
             
         except Exception as e:
             print(f"Error during classification: {e}")
-            # Fallback to default values
+            # Return defaults immediately on any error
             article.update({
-                "topic": "other",
+                "topic": "general",
                 "company_ticker": "UNKNOWN",
-                "region": "GLOBAL"
+                "region": "global"
             })
         
         return article

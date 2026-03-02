@@ -50,18 +50,28 @@ class SentimentAgent:
         Returns:
             Enriched article dictionary with sentiment, sentiment_score, and market_impact fields.
         """
-        # Run FinBERT sentiment analysis
-        sentiment, sentiment_score = self._analyze_finbert_sentiment(article)
-        
-        # Run Groq market impact analysis
-        market_impact = self._analyze_market_impact(article)
-        
-        # Add sentiment analysis to article
-        article.update({
-            "sentiment": sentiment,
-            "sentiment_score": sentiment_score,
-            "market_impact": market_impact
-        })
+        try:
+            # Run FinBERT sentiment analysis
+            sentiment, sentiment_score = self._analyze_finbert_sentiment(article)
+            
+            # Run Groq market impact analysis
+            market_impact = self._analyze_market_impact(article)
+            
+            # Add sentiment analysis to article
+            article.update({
+                "sentiment": sentiment,
+                "sentiment_score": sentiment_score,
+                "market_impact": market_impact
+            })
+            
+        except Exception as e:
+            print(f"Error during sentiment analysis: {e}")
+            # Return defaults immediately on any error
+            article.update({
+                "sentiment": "neutral",
+                "market_impact": "low",
+                "sentiment_score": 0.0
+            })
         
         return article
     
