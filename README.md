@@ -71,6 +71,19 @@ The UI is a Streamlit app with:
 
 ---
 
+## ⚠️ Why There Is No Live Demo Link
+
+A hosted demo link is not available for this project due to the following infrastructure constraints:
+
+- **Local ML models at runtime** — The pipeline loads FinBERT (`ProsusAI/finbert`) and `sentence-transformers/all-MiniLM-L6-v2` directly into memory on each run. Free hosting tiers (Streamlit Cloud, Hugging Face Spaces) do not provide sufficient RAM or CPU to run these models reliably.
+- **Persistent vector store** — ChromaDB is used as a local file-based vector store. Stateless hosting environments reset the filesystem on each deployment, which would wipe the RAG index between sessions.
+- **API key sensitivity** — The platform requires a live Groq API key and a NewsAPI key. Embedding these in a public hosted environment would expose credentials or exhaust rate limits quickly under shared usage.
+- **Pipeline latency** — Each full run makes 17+ sequential LLM calls to Groq. On shared free-tier infrastructure, this would routinely time out or hit rate limits, producing a broken experience for any visitor.
+
+The screenshots above represent a fully functional local run. To experience the platform, follow the [setup instructions below](#-how-to-run-it) — it runs in under 5 minutes on any machine with Python 3.10+.
+
+---
+
 ## 🏗️ System Overview
 
 ```text
