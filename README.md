@@ -51,6 +51,26 @@ The UI is a Streamlit app with:
 
 ---
 
+## 📸 Screenshots
+
+### Home Dashboard
+![Home](screenshots/home.png)
+
+### Pipeline Running
+![Pipeline Running 1](screenshots/Pipeline%20Running%201.png)
+![Pipeline Running 2](screenshots/Pipeline%20Running%202.png)
+
+### Alerts
+![Alerts](screenshots/Alerts.png)
+
+### Article Expanded
+![Article Expanded](screenshots/Article%20Expanded.png)
+
+### RAG History Query
+![RAG Query](screenshots/RAG%20query%20screenshot.png)
+
+---
+
 ## 🏗️ System Overview
 
 ```text
@@ -301,6 +321,7 @@ news-intel-platform/
 ├── rag/
 │   └── vectorstore/             # ChromaDB persistent store
 ├── data/                        # Cached article data
+├── screenshots/                 # App screenshots
 ├── app.py                       # Streamlit dashboard
 ├── orchestrator.py              # Sequential pipeline runner
 ├── config.py                    # Centralized config + env loading
